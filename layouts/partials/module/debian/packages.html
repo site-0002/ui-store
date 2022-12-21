@@ -1,0 +1,74 @@
+{{ $url := (($.Site.Data.api.obs.url) | default "") }}
+{{ $user := (($.Site.Data.api.obs.user) | default "") }}
+{{ $project := (($.Site.Data.api.obs.project.debian) | default "") }}
+{{ $project_url := ((replace ($project) ":" "/") | default "") }}
+{{ $ts := (now.Format "2006-01-02") }}
+{{ $headers := (dict "User-Agent" (($.Site.Data.api.user_agent) | default "")) }}
+
+{{ $packages := (getJSON ($url) "/projects/" ($project_url) "/packages.json?ts=" ($ts) ($headers)) }}
+
+<div class="row row-cols-1 row-cols-lg-2 row-cols-xl-3 g-3">
+    {{ range ($packages) }}
+        {{ $package := (getJSON ($url) "/projects/" ($project_url) "/packages/" . "/info.json?ts=" ($ts) ($headers)) }}
+        {{ range ($package) }}
+            {{ $id := ((printf "%d.%s" (now.Unix) (delimit (shuffle (seq 999)) "")) | md5) }}
+            <div class="col">
+              <article class="card h-100" id="package-{{ ($id) }}">
+                <div class="card-header">
+                  <ul class="nav nav-tabs card-header-tabs" role="tablist">
+                    <li class="nav-item">
+                      <a title='{{ (i18n "home") }}' class="nav-link active" href="#" id="tab-home-{{ ($id) }}" data-bs-toggle="tab" data-bs-target="#tab-pane-home-{{ ($id) }}" role="tab" aria-controls="tab-pane-home-{{ ($id) }}" aria-selected="true">
+                        <i class="fas fa-home fa-fw"></i>
+                      </a>
+                    </li>
+                    <li class="nav-item">
+                      <a title='{{ (i18n "info") }}' class="nav-link" href="#" id="tab-info-{{ ($id) }}" data-bs-toggle="tab" data-bs-target="#tab-pane-info-{{ ($id) }}" role="tab" aria-controls="tab-pane-info-{{ ($id) }}" aria-selected="false">
+                        <i class="fas fa-info fa-fw"></i>
+                      </a>
+                    </li>
+                  </ul>
+                </div>
+                <div class="tab-content h-100">
+                  <div class="tab-pane show active" id="tab-pane-home-{{ ($id) }}" role="tabpanel" aria-labelledby="tab-home-{{ ($id) }}" tabindex="0">
+                    <div class="card-body node-body">
+                      <h5 class="card-title">
+                        <a href="https://build.opensuse.org/package/show/{{ (._project) }}/{{ (._name) }}" target="_blank">{{ ((.title) | default (._name)) }}</a>
+                      </h5>
+                      <p class="card-text">{{ (.description) }}</p>
+                    </div>
+                  </div>
+                  <div class="tab-pane" id="tab-pane-info-{{ ($id) }}" role="tabpanel" aria-labelledby="tab-info-{{ ($id) }}" tabindex="0">
+                    <ul class="list-group list-group-flush node-body">
+                      <li class="list-group-item">
+                        <div class="row row-cols-1 row-cols-sm-2 g-0">
+                          <div class="col">{{ (i18n "project") }}</div>
+                          <div class="col">
+                            <a href="https://build.opensuse.org/project/show/{{ (._project) }}" target="_blank">{{ (._project) }}</a>
+                          </div>
+                        </div>
+                      </li>
+                    </ul>
+                  </div>
+                </div>
+                <div class="card-footer text-muted">
+                  <ul class="list-inline m-0">
+                    <li class="list-inline-item">
+                      <a title='{{ (i18n "project") }}' class="btn btn-light btn-sm text-muted" href="https://build.opensuse.org/project/show/{{ (._project) }}" target="_blank" role="button">
+                        <i class="fas fa-folder fa-fw"></i>
+                      </a>
+                    </li>
+                  </ul>
+                </div>
+              </article>
+            </div>
+        {{ end }}
+    {{ else }}
+      <div class="col">
+          {{ (partial "function/alert" (dict
+          "type" "warning"
+          "icon" "fas fa-triangle-exclamation"
+          "msg" "alert.obs.packages_not_found"
+          )) }}
+      </div>
+    {{ end }}
+</div>

@@ -1,0 +1,43 @@
+{{ $id_tabs := (printf "node-tabs-%s" ((.File.UniqueID) | default "")) }}
+
+<div class="section py-3 py-md-4">
+  <div class="container">
+    <ul class="nav nav-tabs mb-3" id="{{ ($id_tabs) }}" data-ext-fn="ext-node-tabs" role="tablist">
+      <li class="nav-item" role="presentation">
+        <button title='{{ (i18n "home") }}' class="nav-link active" id="tab-main-home" data-bs-toggle="tab" data-bs-target="#tab-pane-main-home" type="button" role="tab" aria-controls="tab-pane-main-home" aria-selected="true">
+          <i class="fas fa-home fa-fw"></i>
+        </button>
+      </li>
+      <li class="nav-item" role="presentation">
+        <button title='{{ (i18n "members") }}' class="nav-link" id="tab-main-members" data-bs-toggle="tab" data-bs-target="#tab-pane-main-members" type="button" role="tab" aria-controls="tab-pane-main-members" aria-selected="false">
+          <i class="fas fa-user-tie fa-fw"></i>
+        </button>
+      </li>
+      <li class="nav-item" role="presentation">
+        <button title='{{ (i18n "collaborators") }}' class="nav-link" id="tab-main-collaborators" data-bs-toggle="tab" data-bs-target="#tab-pane-main-collaborators" type="button" role="tab" aria-controls="tab-pane-main-collaborators" aria-selected="false">
+          <i class="fas fa-user-secret fa-fw"></i>
+        </button>
+      </li>
+      <li class="nav-item" role="presentation">
+        <button title='{{ (i18n "packages") }}' class="nav-link" id="tab-main-repos" data-bs-toggle="tab" data-bs-target="#tab-pane-main-repos" type="button" role="tab" aria-controls="tab-pane-main-repos" aria-selected="false">
+          <i class="fas fa-cubes fa-fw"></i>
+        </button>
+      </li>
+    </ul>
+    <div class="tab-content">
+      <div class="tab-pane show active" id="tab-pane-main-home" role="tabpanel" aria-labelledby="tab-main-home" tabindex="0">
+          {{ (partial "module/github/org/info" .) }}
+        <div class="node-body">{{ (.Content) }}</div>
+      </div>
+      <div class="tab-pane" id="tab-pane-main-members" role="tabpanel" aria-labelledby="tab-main-members" tabindex="0">
+          {{ (partial "module/github/org/members" .) }}
+      </div>
+      <div class="tab-pane" id="tab-pane-main-collaborators" role="tabpanel" aria-labelledby="tab-main-collaborators" tabindex="0">
+          {{ (partial "module/github/org/collaborators" .) }}
+      </div>
+      <div class="tab-pane" id="tab-pane-main-repos" role="tabpanel" aria-labelledby="tab-main-repos" tabindex="0">
+          {{ (partial "module/github/org/repos" .) }}
+      </div>
+    </div>
+  </div>
+</div>

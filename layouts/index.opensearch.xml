@@ -1,0 +1,24 @@
+{{ $url := (urls.Parse $.Site.BaseURL) }}
+
+{{ ((printf "<?xml version='1.0' encoding='utf-8'?>") | safeHTML) }}
+<OpenSearchDescription xmlns="http://a9.com/-/spec/opensearch/1.1/"
+                       xmlns:moz="http://www.mozilla.org/2006/browser/search/">
+  <ShortName>{{ $.Site.Title }}</ShortName>
+  <Description>{{ $.Site.Params.description }}</Description>
+  <Contact>{{ $.Site.Params.contacts.email }}</Contact>
+  <LongName>{{ $.Site.Title }} | {{ ($.Site.Language.Lang | upper) }}</LongName>
+  <Image height="64" width="64" type="image/png">{{ ("img/icon-64.png" | absURL) }}</Image>
+  <Image height="16" width="16" type="image/png">{{ ("img/icon-16.png" | absURL) }}</Image>
+  <Developer>{{ $.Site.Params.developer.name }}</Developer>
+  <Attribution>{{ $.Site.Params.license.name }}</Attribution>
+  <SyndicationRight>open</SyndicationRight>
+  <AdultContent>false</AdultContent>
+  <Language>{{ $.Site.LanguageCode }}</Language>
+  <OutputEncoding>UTF-8</OutputEncoding>
+  <InputEncoding>UTF-8</InputEncoding>
+  <moz:SearchForm>https://google.com/search?as_sitesearch={{ $url.Host }}&amp;q={searchTerms}</moz:SearchForm>
+  <Url type="text/html" method="get"
+       template="https://google.com/search?as_sitesearch={{ $url.Host }}&amp;q={searchTerms}"/>
+  <Url type="application/opensearchdescription+xml" rel="self"
+       template='{{ "opensearch.xml" | absLangURL }}'/>
+</OpenSearchDescription>

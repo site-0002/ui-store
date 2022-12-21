@@ -1,0 +1,56 @@
+body {
+  @for $i from 1 through 6 {
+    h#{$i},
+    .h#{$i} {
+      @include font-cond();
+    }
+  }
+}
+
+body {
+  .node {
+    &-body {
+      @include font-serif();
+
+      blockquote {
+        font-size: 1.25rem;
+        border-left: .5rem solid #f8f9fa;
+        padding-left: 1rem;
+      }
+
+      kbd {
+        @include font-mono();
+      }
+
+      code {
+        @include font-mono();
+        white-space: nowrap;
+      }
+
+      pre {
+        @include font-mono();
+        border-radius: .25rem;
+        max-height: 40rem;
+
+        > code {
+          background: #333;
+          color: #fff;
+          display: block;
+          padding: 1em;
+          white-space: pre;
+        }
+      }
+
+      .figure {
+        &.is-table {
+          display: inline-table;
+
+          .figure-caption {
+            display: table-caption;
+            caption-side: bottom;
+          }
+        }
+      }
+    }
+  }
+}

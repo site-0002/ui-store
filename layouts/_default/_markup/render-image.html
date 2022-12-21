@@ -1,0 +1,5 @@
+{{ $title := ((.Title) | default "") }}
+{{ $alt := ((.Text) | default "") }}
+{{ $src := ((.Destination) | safeURL) }}
+
+<img title="{{ ($title) }}" class="img-fluid img-thumbnail" src="{{ ($src) }}" alt="{{ ($alt) }}" loading="lazy"/>

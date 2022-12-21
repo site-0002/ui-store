@@ -1,0 +1,47 @@
+$color-00: rgba(255, 255, 255, .5);
+$color-01: rgba(248, 249, 250, .5);
+
+html {
+  scroll-padding-top: 1rem;
+}
+
+body {
+  @include font-base();
+  padding-top: 4rem;
+
+  a {
+    text-decoration: none;
+  }
+}
+
+body {
+  > header {
+    .navbar {
+      @include font-cond();
+
+      // HeadRoom JS.
+      &.headroom {
+        will-change: transform;
+        transition: transform 200ms linear;
+
+        &--pinned {
+          transform: translateY(0%);
+        }
+
+        &--unpinned {
+          transform: translateY(-100%);
+        }
+      }
+
+      &-brand {
+        @include font-brand();
+      }
+    }
+  }
+}
+
+body {
+  .nav-tabs {
+    @include font-cond();
+  }
+}

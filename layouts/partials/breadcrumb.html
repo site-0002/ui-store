@@ -1,0 +1,18 @@
+{{ define "breadcrumb" }}
+    {{ with (.Parent) }}
+        {{ template "breadcrumb" . }}
+        {{ $home_icon := (("<i class='fas fa-home fa-fw'></i>") | safeHTML) }}
+        <li class="breadcrumb-item">
+          <a href="{{ (.RelPermalink) }}">{{ if (.IsHome) }}{{ ($home_icon) }}{{ else }}{{ (.Title) }}{{ end }}</a>
+        </li>
+    {{ end }}
+{{ end }}
+
+{{ if (not (.IsHome)) }}
+  <nav class="small" aria-label="breadcrumb">
+    <ol class="breadcrumb bg-light p-2 rounded">
+        {{ template "breadcrumb" . }}
+      <li class="breadcrumb-item active" aria-current="page">{{ (.Title) }}</li>
+    </ol>
+  </nav>
+{{ end }}

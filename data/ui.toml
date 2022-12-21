@@ -1,0 +1,81 @@
+# -------------------------------------------------------------------------------------------------------------------- #
+# Meta.
+# -------------------------------------------------------------------------------------------------------------------- #
+
+[meta.color]
+theme = '#ffffff'
+background = '#ffffff'
+
+[meta.icons]
+sizes = ['16', '24', '32', '48', '64', '72', '80', '96', '128', '144', '152', '167', '180', '192', '196', '256', '300', '512']
+
+[meta.title]
+emoji = ''
+
+# -------------------------------------------------------------------------------------------------------------------- #
+# Network.
+# -------------------------------------------------------------------------------------------------------------------- #
+
+[network]
+dns_prefetch = [
+  'https://fonts.googleapis.com',
+  'https://fonts.gstatic.com',
+  'https://cdn.jsdelivr.net',
+  'https://gravatar.com'
+]
+pre_connect = [
+  'https://fonts.googleapis.com',
+  'https://fonts.gstatic.com',
+  'https://cdn.jsdelivr.net',
+  'https://gravatar.com'
+]
+
+# -------------------------------------------------------------------------------------------------------------------- #
+# Fonts.
+# -------------------------------------------------------------------------------------------------------------------- #
+
+[fonts]
+external = [
+  'https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,400;0,700;1,400;1,700&display=swap',
+  'https://fonts.googleapis.com/css2?family=PT+Serif:ital,wght@0,400;0,700;1,400;1,700&display=swap',
+  'https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,400;0,700;1,400;1,700&display=swap',
+  'https://fonts.googleapis.com/css2?family=Roboto+Condensed:ital,wght@0,400;0,700;1,400;1,700&display=swap'
+]
+internal = []
+
+# -------------------------------------------------------------------------------------------------------------------- #
+# Styles.
+# -------------------------------------------------------------------------------------------------------------------- #
+
+[styles.vendor]
+external = [
+  'https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css',
+  'https://cdn.jsdelivr.net/npm/bootstrap@5/dist/css/bootstrap.min.css',
+  'https://cdn.jsdelivr.net/gh/highlightjs/cdn-release/build/styles/agate.min.css'
+]
+internal = []
+
+[styles.system]
+external = []
+internal = [
+  'css/system.scss'
+]
+
+# -------------------------------------------------------------------------------------------------------------------- #
+# Scripts.
+# -------------------------------------------------------------------------------------------------------------------- #
+
+[scripts.vendor]
+external = [
+  'https://cdn.jsdelivr.net/npm/@popperjs/core@2/dist/umd/popper.min.js',
+  'https://cdn.jsdelivr.net/npm/bootstrap@5/dist/js/bootstrap.min.js',
+  'https://cdn.jsdelivr.net/npm/headroom.js/dist/headroom.min.js',
+  'https://cdn.jsdelivr.net/gh/highlightjs/cdn-release/build/highlight.min.js'
+]
+internal = []
+
+[scripts.system]
+external = []
+internal = [
+  'js/system.js'
+]

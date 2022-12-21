@@ -1,0 +1,16 @@
+<!--[ menu: main ]-->
+<nav class="navbar navbar-expand-lg navbar-light fixed-top bg-light border-bottom shadow-sm text-lg-center">
+  <div class="container-fluid">
+    <a title="{{ ($.Site.Title) }}" class="navbar-brand" href='{{ (("/") | relLangURL) }}'>{{ ($.Site.Title) }}</a>
+    <button type="button" class="navbar-toggler" data-bs-toggle="collapse" data-bs-target="#navTopBar"
+            aria-controls="navTopBar" aria-expanded="false" aria-label="">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navTopBar">
+      <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+          {{ (partial "module/menu/item" (dict "context" . "id" "main")) }}
+      </ul>
+    </div>
+  </div>
+</nav>
+<!--[ / menu: main ]-->

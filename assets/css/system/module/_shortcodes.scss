@@ -1,0 +1,27 @@
+body {
+  .node {
+    &-body {
+      .shortcode {
+        &-quote {
+          border-left: .5rem solid #f8f9fa;
+          padding-left: 1rem;
+
+          blockquote {
+            border-left: unset;
+            padding-left: unset;
+          }
+        }
+
+        &-spi {
+          cursor: pointer;
+
+          span {
+            &:last-child {
+              opacity: .6;
+            }
+          }
+        }
+      }
+    }
+  }
+}

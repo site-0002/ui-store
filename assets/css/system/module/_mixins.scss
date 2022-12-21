@@ -1,0 +1,19 @@
+@mixin font-base() {
+  font-family: 'Roboto', sans-serif;
+}
+
+@mixin font-cond() {
+  font-family: 'Roboto Condensed', sans-serif;
+}
+
+@mixin font-mono() {
+  font-family: 'JetBrains Mono', 'Fira Code', 'Consolas', monospace;
+}
+
+@mixin font-serif() {
+  font-family: 'PT Serif', 'Times New Roman', 'Georgia', 'Times', serif;
+}
+
+@mixin font-brand() {
+  font-family: 'Roboto Condensed', sans-serif;
+}

@@ -1,0 +1,93 @@
+<!--[ blocks ]-->
+{{ $block := (where ($.Site.RegularPages) "Type" "in" "footer") }}
+
+{{ with ($block) }}
+  <div class="section py-5 border-bottom">
+    <div class="container">
+      <div class="row g-3">
+          {{ range ($block) }}
+            <div class="col-lg">
+              <article>
+                <h4 class="h5 border-bottom pb-1 mb-3">{{ (.Title) }}</h4>
+                <div class="node-body">{{ (.Content) }}</div>
+              </article>
+            </div>
+          {{ end }}
+      </div>
+    </div>
+  </div>
+{{ end }}
+<!--[ / blocks ]-->
+
+<!--[ meta ]-->
+<div class="section py-4">
+  <div class="container">
+    <div class="row text-center small align-items-center">
+
+      <!--[ copyright ]-->
+      <div class="col-lg text-lg-start">
+        <ul class="list-inline mb-0">
+          <li class="list-inline-item">
+            <div>{{ ($.Site.Title) }} &copy; {{ (now.UTC.Format "2006") }}</div>
+              {{ with ($.Site.Params.description) }}
+                <div>{{ . }}</div>
+              {{ end }}
+          </li>
+        </ul>
+      </div>
+      <!--[ / copyright ]-->
+
+      <!--[ info ]-->
+      <div class="col-lg text-lg-end">
+        <ul class="list-inline mb-0">
+            {{ with ($.Site.Params.contacts.email) }}
+              <li class="list-inline-item">
+                <a title="{{ . }}" class="btn btn-sm" href="mailto:{{ . }}">
+                  <i class="far fa-envelope fa-fw"></i>
+                </a>
+              </li>
+            {{ end }}
+            {{ if ($.Site.Params.license.name) }}
+              <li class="list-inline-item">
+                <a title="{{ ($.Site.Params.license.name) }}" class="btn btn-sm" href="{{ ($.Site.Params.license.url) }}" target="_blank" rel="noopener nofollow">
+                  <i class="far fa-copyright fa-fw"></i>
+                </a>
+              </li>
+            {{ end }}
+            {{ with (.OutputFormats.Get "rss") }}
+              <li class="list-inline-item">
+                <a title="{{ (.Name) }}" class="btn btn-sm" href="{{ (.RelPermalink) }}" target="_blank">
+                  <i class="fas fa-rss fa-fw"></i>
+                </a>
+              </li>
+            {{ end }}
+            {{ with (.OutputFormats.Get "json") }}
+              <li class="list-inline-item">
+                <a title="{{ (.Name) }}" class="btn btn-sm" href="{{ (.RelPermalink) }}" target="_blank">
+                  <i class="far fa-file-code fa-fw"></i>
+                </a>
+              </li>
+            {{ end }}
+          <li class="list-inline-item">
+            <a title='{{ (i18n "site_resize") }}' class="btn btn-sm" id="ext-site-resize" href="#">
+              <i class="fas fa-expand-alt fa-fw"></i>
+            </a>
+          </li>
+          <li class="list-inline-item dropup">
+            <a title='{{ (i18n "languages") }}' class="dropdown-toggle btn btn-sm" href="#" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+              <i class="fas fa-language fa-fw"></i>
+            </a>
+            <div class="dropdown-menu dropdown-menu-end shadow">
+                {{ range ($.Site.Home.AllTranslations) }}
+                  <a class="dropdown-item" href="{{ (.RelPermalink) }}" hreflang="{{ (.Language.Lang) }}">{{ (.Language.LanguageName) }}</a>
+                {{ end }}
+            </div>
+          </li>
+        </ul>
+      </div>
+      <!--[ / info ]-->
+
+    </div>
+  </div>
+</div>
+<!--[ / meta ]-->

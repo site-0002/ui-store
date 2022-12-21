@@ -1,0 +1,17 @@
+{{ $img_src := ($.Site.Data.cfg.egg.image.src | default "") }}
+{{ $img_width := ($.Site.Data.cfg.egg.image.width | default "") }}
+{{ $img_height := ($.Site.Data.cfg.egg.image.height | default "") }}
+
+<div class="modal fade" id="ext-egg" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+    <div class="modal-content shadow">
+      <div class="modal-header">
+        <h5 class="modal-title">{{ (i18n "egg") }}</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label='{{ (i18n "close") }}'></button>
+      </div>
+      <div class="modal-body">
+        <img class="d-block w-100 h-100" src="{{ ($img_src) }}" width="{{ ($img_width) }}" height="{{ ($img_height) }}" alt="{{ ($img_src) }}" loading="lazy"/>
+      </div>
+    </div>
+  </div>
+</div>

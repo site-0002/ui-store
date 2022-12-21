@@ -1,0 +1,12 @@
+name = "UI Store"
+license = "MIT"
+licenselink = ""
+description = "Store User Interface"
+homepage = "https://v77.dev"
+tags = ["website", "responsive", "multilingual", "mobile"]
+features = ["posts", "shortcodes", "comments"]
+min_version = "0.88.0"
+
+[author]
+name = "v77 Development"
+homepage = "https://v77.dev"

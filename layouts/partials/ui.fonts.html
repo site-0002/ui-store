@@ -1,0 +1,23 @@
+{{ $fonts := ($.Site.Data.ui.fonts) }}
+
+<!--[ fonts: external ]-->
+{{ with ($fonts.external) }}
+    {{ range . }}
+      <link rel="preload" href="{{ . }}" crossorigin="anonymous" as="style" onload="this.rel='stylesheet'"/>
+      <noscript>
+        <link rel="stylesheet" href="{{ . }}" crossorigin="anonymous"/>
+      </noscript>
+    {{ end }}
+{{ end }}
+<!--[ / fonts: external ]-->
+
+<!--[ fonts: internal ]-->
+{{ with ($fonts.internal) }}
+    {{ range . }}
+      <link rel="preload" href="{{ . }}" crossorigin="anonymous" as="style" onload="this.rel='stylesheet'"/>
+      <noscript>
+        <link rel="stylesheet" href="{{ . }}" crossorigin="anonymous"/>
+      </noscript>
+    {{ end }}
+{{ end }}
+<!--[ / fonts: internal ]-->

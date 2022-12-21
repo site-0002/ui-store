@@ -1,0 +1,19 @@
+$bg-color: #333;
+$color: #fff;
+
+body {
+  .node {
+    &-body {
+      pre {
+        background-color: $bg-color;
+        color: $color;
+
+        code {
+          &.hljs {
+            overflow-x: unset;
+          }
+        }
+      }
+    }
+  }
+}

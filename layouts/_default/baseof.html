@@ -1,0 +1,23 @@
+<!doctype html>
+
+{{ $lang := (($.Site.LanguageCode) | default "en-US") }}
+{{ $type := (($.Type) | default "") }}
+{{ $home := "" }}{{ $node := "" }}{{ $page := "" }}
+{{ if ($.IsHome) }}{{ $home = "is-home" }}{{ end }}
+{{ if ($.IsNode) }}{{ $node = "is-node" }}{{ end }}
+{{ if ($.IsPage) }}{{ $page = "is-page" }}{{ end }}
+
+<html class="h-100" dir="ltr" lang="{{ $lang }}"
+      prefix="og: http://ogp.me/ns#
+      article: http://ogp.me/ns/article#
+      profile: http://ogp.me/ns/profile#
+      fb: http://ogp.me/ns/fb#">
+<head>{{ (partial "head" .) }}</head>
+<body class="d-flex flex-column h-100 {{ ($home) }} {{ ($node) }} {{ ($page) }} type-{{ ($type) }}">
+<header>{{ (partial "header" .) }}</header>
+<main class="wrapper flex-shrink-0">{{ block "main" . }}{{ end }}</main>
+<footer class="mt-auto bg-light text-muted">{{ (partial "footer" .) }}</footer>
+{{ (partial "module/eggs" .) }}
+{{ (partial "ui.js" .) }}
+</body>
+</html>

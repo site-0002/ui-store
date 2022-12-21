@@ -1,0 +1,288 @@
+{{ $url := (($.Site.Data.api.github.url) | default "") }}
+{{ $owner := (($.Site.Data.api.github.owner) | default "") }}
+{{ $ts := (now.Format "2006-01-02") }}
+{{ $headers := (dict "User-Agent" (($.Site.Data.api.user_agent) | default "")) }}
+
+{{ $repos := (getJSON ($url) "/orgs/" ($owner) "/repos.json?ts=" ($ts) ($headers)) }}
+{{ $topics := slice }}
+
+{{ range ($repos) }}
+    {{ if (not (in . ".")) }}
+        {{ $repo := (getJSON ($url) "/orgs/" ($owner) "/repos/" . "/info.json?ts=" ($ts) ($headers)) }}
+        {{ $topics = (($topics) | append ($repo.topics)) }}
+    {{ end }}
+{{ end }}
+
+{{ $topics = (($topics) | uniq) }}
+
+{{ with ($topics)}}
+    {{ $id := ((printf "github/topics/%s" "all") | md5) }}
+    <div class="accordion mb-3" id="accordion-github-filter">
+      <div class="accordion-item">
+        <h2 class="accordion-header" id="accordion-header-github-filter">
+          <button class="accordion-button collapsed text-uppercase" type="button" data-bs-toggle="collapse" data-bs-target="#accordion-collapse-github-filter" aria-expanded="false" aria-controls="accordion-collapse-github-filter">
+              {{ (i18n "filters") }}
+          </button>
+        </h2>
+        <div id="accordion-collapse-github-filter" class="accordion-collapse collapse" aria-labelledby="accordion-header-github-filter" data-bs-parent="#accordion-github-filter">
+          <div class="accordion-body">
+            <div class="row row-cols-auto g-1">
+              <div class="col">
+                <input type="checkbox" class="btn-check" id="btn-filter-{{ ($id) }}" checked/>
+                <label class="btn btn-success btn-sm" for="btn-filter-{{ ($id) }}">{{ (i18n "topics_all") }}</label>
+              </div>
+                {{ range (sort .) }}
+                    {{ $id := ((printf "github/topics/%s" (.)) | md5) }}
+                    <div class="col">
+                      <input type="checkbox" class="btn-check" id="btn-filter-{{ ($id) }}"/>
+                      <label class="btn btn-primary btn-sm" for="btn-filter-{{ ($id) }}">{{ . }}</label>
+                    </div>
+                {{ end }}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+{{ end }}
+
+<div class="row row-cols-1 row-cols-lg-2 row-cols-xl-3 g-3">
+    {{ range ($repos) }}
+        {{ if (not (in . ".")) }}
+            {{ $repo := (getJSON ($url) "/orgs/" ($owner) "/repos/" . "/info.json?ts=" ($ts) ($headers)) }}
+            {{ $readme := (getJSON ($url) "/orgs/" ($owner) "/repos/" . "/readme.json?ts=" ($ts) ($headers)) }}
+            {{ $id := ((printf "github/org/repos.%d.%s" (now.Unix) (delimit (shuffle (seq 999)) "")) | md5) }}
+            <div class="col" data-topics='{{ with ($repo.topics) }}{{ (delimit . " ") }}{{ end }}'>
+              <article class="card h-100" id="repo-{{ ($id) }}">
+                <div class="card-header">
+                  <ul class="nav nav-tabs card-header-tabs" role="tablist">
+                    <li class="nav-item">
+                      <a title='{{ (i18n "home") }}' class="nav-link active" href="#" id="tab-home-{{ ($id) }}" data-bs-toggle="tab" data-bs-target="#tab-pane-home-{{ ($id) }}" role="tab" aria-controls="tab-pane-home-{{ ($id) }}" aria-selected="true">
+                        <i class="fas fa-home fa-fw"></i>
+                      </a>
+                    </li>
+                    <li class="nav-item">
+                      <a title='{{ (i18n "info") }}' class="nav-link" href="#" id="tab-info-{{ ($id) }}" data-bs-toggle="tab" data-bs-target="#tab-pane-info-{{ ($id) }}" role="tab" aria-controls="tab-pane-info-{{ ($id) }}" aria-selected="false">
+                        <i class="fas fa-info fa-fw"></i>
+                      </a>
+                    </li>
+                    <li class="nav-item">
+                      <a title='{{ (i18n "date") }}' class="nav-link" href="#" id="tab-date-{{ ($id) }}" data-bs-toggle="tab" data-bs-target="#tab-pane-date-{{ ($id) }}" role="tab" aria-controls="tab-pane-date-{{ ($id) }}" aria-selected="false">
+                        <i class="far fa-clock fa-fw"></i>
+                      </a>
+                    </li>
+                      {{ with ($repo.topics) }}
+                        <li class="nav-item">
+                          <a title='{{ (i18n "topics") }}' class="nav-link" href="#" id="tab-topics-{{ ($id) }}" data-bs-toggle="tab" data-bs-target="#tab-pane-topics-{{ ($id) }}" role="tab" aria-controls="tab-pane-topics-{{ ($id) }}" aria-selected="false">
+                            <i class="fas fa-tags fa-fw"></i>
+                          </a>
+                        </li>
+                      {{ end }}
+                  </ul>
+                </div>
+                <div class="tab-content h-100">
+                  <div class="tab-pane show active" id="tab-pane-home-{{ ($id) }}" role="tabpanel" aria-labelledby="tab-home-{{ ($id) }}" tabindex="0">
+                    <div class="card-body node-body">
+                      <div class="row g-3">
+                        <div class="col-sm-3">
+                          <div class="node-cover text-center">
+                            <a href="{{ ($repo.html_url) }}" target="_blank">
+                              <img src="https://raw.githubusercontent.com/{{ ($repo.full_name) }}/{{ ($repo.default_branch) }}/.github/logo.svg" class="img-fluid img-thumbnail rounded" alt="" loading="lazy"/>
+                            </a>
+                          </div>
+                        </div>
+                        <div class="col">
+                          <h5 class="card-title">
+                            <a href="{{ ($repo.html_url) }}" target="_blank">{{ ($repo.name) }}</a>
+                          </h5>
+                          <p class="card-text">{{ ($repo.description) }}</p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="tab-pane" id="tab-pane-info-{{ ($id) }}" role="tabpanel" aria-labelledby="tab-info-{{ ($id) }}" tabindex="0">
+                    <ul class="list-group list-group-flush node-body">
+                        {{ if ($repo.license.key) }}
+                          <li class="list-group-item">
+                            <div class="row row-cols-1 row-cols-sm-2 g-0">
+                              <div class="col">{{ (i18n "license") }}</div>
+                              <div class="col">
+                                <a href="https://choosealicense.com/licenses/{{ ($repo.license.key) }}/" target="_blank" rel="noopener nofollow">
+                                    {{ ($repo.license.spdx_id) }}
+                                </a>
+                              </div>
+                            </div>
+                          </li>
+                        {{ end }}
+                      <li class="list-group-item">
+                        <div class="row row-cols-1 row-cols-sm-2 g-0">
+                          <div class="col">{{ (i18n "issues") }}</div>
+                          <div class="col">
+                            <a href="{{ ($repo.html_url) }}/issues" target="_blank">{{ ($repo.open_issues_count) }}</a>
+                          </div>
+                        </div>
+                      </li>
+                      <li class="list-group-item">
+                        <div class="row row-cols-1 row-cols-sm-2 g-0">
+                          <div class="col">{{ (i18n "stars") }}</div>
+                          <div class="col">
+                            <a href="{{ ($repo.html_url) }}/stargazers" target="_blank">{{ ($repo.stargazers_count) }}</a>
+                          </div>
+                        </div>
+                      </li>
+                      <li class="list-group-item">
+                        <div class="row row-cols-1 row-cols-sm-2 g-0">
+                          <div class="col">{{ (i18n "watchers") }}</div>
+                          <div class="col">
+                            <a href="{{ ($repo.html_url) }}/watchers" target="_blank">{{ ($repo.watchers_count) }}</a>
+                          </div>
+                        </div>
+                      </li>
+                      <li class="list-group-item">
+                        <div class="row row-cols-1 row-cols-sm-2 g-0">
+                          <div class="col">{{ (i18n "forks") }}</div>
+                          <div class="col">
+                            <a href="{{ ($repo.html_url) }}/network/members" target="_blank">{{ ($repo.forks_count) }}</a>
+                          </div>
+                        </div>
+                      </li>
+                        {{ if ($repo.language) }}
+                          <li class="list-group-item">
+                            <div class="row row-cols-1 row-cols-sm-2 g-0">
+                              <div class="col">{{ (i18n "language") }}</div>
+                              <div class="col">
+                                <a href="https://github.com/search?l={{ . }}&q=org:{{ ($owner) }}&type=Repositories" target="_blank">{{ ($repo.language) }}</a>
+                              </div>
+                            </div>
+                          </li>
+                        {{ end }}
+                    </ul>
+                  </div>
+                  <div class="tab-pane" id="tab-pane-date-{{ ($id) }}" role="tabpanel" aria-labelledby="tab-date-{{ ($id) }}" tabindex="0">
+                    <ul class="list-group list-group-flush node-body">
+                      <li class="list-group-item">
+                        <div class="row row-cols-1 row-cols-sm-2 g-0">
+                          <div class="col">{{ (i18n "created_at") }}</div>
+                          <div class="col">
+                            <time datetime="{{ ($repo.created_at) }}" data-ext-fn="ext-date-local">
+                                {{ (($repo.created_at) | time.Format "2006/01/02 15:04:05 MST") }}
+                            </time>
+                          </div>
+                        </div>
+                      </li>
+                      <li class="list-group-item">
+                        <div class="row row-cols-1 row-cols-sm-2 g-0">
+                          <div class="col">{{ (i18n "updated_at") }}</div>
+                          <div class="col">
+                            <time datetime="{{ ($repo.updated_at) }}" data-ext-fn="ext-date-local">
+                                {{ (($repo.updated_at) | time.Format "2006/01/02 15:04:05 MST") }}
+                            </time>
+                          </div>
+                        </div>
+                      </li>
+                      <li class="list-group-item">
+                        <div class="row row-cols-1 row-cols-sm-2 g-0">
+                          <div class="col">{{ (i18n "pushed_at") }}</div>
+                          <div class="col">
+                            <time datetime="{{ ($repo.pushed_at) }}" data-ext-fn="ext-date-local">
+                                {{ (($repo.pushed_at) | time.Format "2006/01/02 15:04:05 MST") }}
+                            </time>
+                          </div>
+                        </div>
+                      </li>
+                    </ul>
+                  </div>
+                    {{ with ($repo.topics) }}
+                      <div class="tab-pane" id="tab-pane-topics-{{ ($id) }}" role="tabpanel" aria-labelledby="tab-topics-{{ ($id) }}" tabindex="0">
+                        <div class="card-body node-body">
+                          <div class="row row-cols-auto g-1">
+                              {{ range . }}
+                                <div class="col">
+                                  <a class="btn btn-light" href="https://github.com/search?q=topic:{{ . }}+org:{{ ($owner) }}&type=Repositories" target="_blank" role="button">{{ . }}</a>
+                                </div>
+                              {{ end }}
+                          </div>
+                        </div>
+                      </div>
+                    {{ end }}
+                </div>
+                <div class="card-footer text-muted">
+                  <ul class="list-inline m-0">
+                      {{ if ($repo.license.key) }}
+                        <li class="list-inline-item">
+                          <a title='{{ (i18n "license") }}' class="btn btn-light btn-sm text-muted" href="https://choosealicense.com/licenses/{{ ($repo.license.key) }}/" target="_blank" rel="noopener nofollow" role="button">
+                            <i class="fa-solid fa-copyright fa-fw me-1"></i>
+                              {{ ($repo.license.spdx_id) }}
+                          </a>
+                        </li>
+                      {{ end }}
+                      {{ if ($repo.open_issues_count) }}
+                        <li class="list-inline-item">
+                          <a title='{{ (i18n "issues") }}' class="btn btn-light btn-sm text-muted" href="{{ ($repo.html_url) }}/issues" target="_blank" role="button">
+                            <i class="far fa-circle-dot fa-fw me-1"></i>
+                              {{ ($repo.open_issues_count) }}
+                          </a>
+                        </li>
+                      {{ end }}
+                      {{ if ($repo.stargazers_count) }}
+                        <li class="list-inline-item">
+                          <a title='{{ (i18n "stars") }}' class="btn btn-light btn-sm text-muted" href="{{ ($repo.html_url) }}/stargazers" target="_blank" role="button">
+                            <i class="fas fa-star fa-fw me-1"></i>
+                              {{ ($repo.stargazers_count) }}
+                          </a>
+                        </li>
+                      {{ end }}
+                      {{ if ($repo.forks_count) }}
+                        <li class="list-inline-item">
+                          <a title='{{ (i18n "forks") }}' class="btn btn-light btn-sm text-muted" href="{{ ($repo.html_url) }}/network/members" target="_blank" role="button">
+                            <i class="fas fa-code-fork fa-fw me-1"></i>
+                              {{ ($repo.forks_count) }}
+                          </a>
+                        </li>
+                      {{ end }}
+                      {{ with ($repo.homepage) }}
+                        <li class="list-inline-item">
+                          <a title='{{ (i18n "site") }}' class="btn btn-light btn-sm text-muted" href="{{ . }}" target="_blank" role="button">
+                            <i class="fas fa-globe fa-fw"></i>
+                          </a>
+                        </li>
+                      {{ end }}
+                      {{ if ($readme) }}
+                        <li class="list-inline-item">
+                          <button title='{{ (i18n "readme") }}' type="button" class="btn btn-light btn-sm text-muted" data-bs-toggle="modal" data-bs-target="#modal-readme-{{ ($id) }}">
+                            <i class="fas fa-file-lines fa-fw"></i>
+                          </button>
+                        </li>
+                      {{ end }}
+                  </ul>
+                </div>
+              </article>
+                {{ if ($readme) }}
+                  <article class="modal fade" id="modal-readme-{{ ($id) }}" tabindex="-1" aria-hidden="true">
+                    <div class="modal-dialog modal-xl modal-dialog-scrollable">
+                      <div class="modal-content shadow-lg">
+                        <div class="modal-header">
+                          <h5 class="modal-title">
+                              {{ (i18n "readme") }}
+                            <a href="{{ ($repo.html_url) }}" target="_blank">{{ ($repo.name) }}</a>
+                          </h5>
+                          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label='{{ (i18n "close") }}'></button>
+                        </div>
+                        <div class="modal-body">
+                          <div class="node-body">{{ (($readme.content | base64Decode) | markdownify) }}</div>
+                        </div>
+                      </div>
+                    </div>
+                  </article>
+                {{ end }}
+            </div>
+        {{ end }}
+    {{ else }}
+      <div class="col">
+          {{ (partial "function/alert" (dict
+          "type" "warning"
+          "icon" "fab fa-github"
+          "msg" "alert.github.repos_not_found"
+          )) }}
+      </div>
+    {{ end }}
+</div>

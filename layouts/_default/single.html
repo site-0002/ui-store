@@ -1,0 +1,15 @@
+{{ define "main" }}
+
+  <div class="section py-3 py-md-4">
+    <div class="container">
+
+        {{ (partial "breadcrumb" .) }}
+
+      <article>
+        <h1 class="text-center">{{ (.Title) }}</h1>
+        <div class="node-body">{{ (.Content) }}</div>
+      </article>
+    </div>
+  </div>
+
+{{ end }}

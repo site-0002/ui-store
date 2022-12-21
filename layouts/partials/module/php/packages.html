@@ -1,0 +1,384 @@
+{{ $url := (($.Site.Data.api.packagist.url) | default "") }}
+{{ $vendor := (($.Site.Data.api.packagist.vendor) | default "") }}
+{{ $ts := (now.Format "2006-01-02") }}
+{{ $headers := (dict "User-Agent" (($.Site.Data.api.user_agent) | default "")) }}
+
+{{ $packages := (getJSON ($url) "/vendors/" ($vendor) "/packages.json?ts=" ($ts) ($headers)) }}
+{{ $keywords := slice }}
+
+{{ range ($packages) }}
+    {{ $package := (getJSON ($url) "/vendors/" ($vendor) "/packages/" . "/info.json?ts=" ($ts) ($headers)) }}
+    {{ range ($package) }}
+        {{ range (.versions) }}
+            {{ $keywords = (($keywords) | append (.keywords)) }}
+        {{ end }}
+    {{ end }}
+{{ end }}
+
+{{ $keywords = (($keywords) | uniq) }}
+
+{{ with ($keywords)}}
+    {{ $id := ((printf "packagist/keywords/%s" "all") | md5) }}
+    <div class="accordion mb-3" id="accordion-php-filter">
+      <div class="accordion-item">
+        <h2 class="accordion-header" id="accordion-header-php-filter">
+          <button class="accordion-button collapsed text-uppercase" type="button" data-bs-toggle="collapse" data-bs-target="#accordion-collapse-php-filter" aria-expanded="false" aria-controls="accordion-collapse-php-filter">
+              {{ (i18n "filters") }}
+          </button>
+        </h2>
+        <div id="accordion-collapse-php-filter" class="accordion-collapse collapse" aria-labelledby="accordion-header-php-filter" data-bs-parent="#accordion-php-filter">
+          <div class="accordion-body">
+            <div class="row row-cols-auto g-1">
+              <div class="col">
+                <input type="checkbox" class="btn-check" id="btn-filter-{{ ($id) }}" checked/>
+                <label class="btn btn-success btn-sm" for="btn-filter-{{ ($id) }}">{{ (i18n "keywords_all") }}</label>
+              </div>
+                {{ range (sort .) }}
+                    {{ $id := ((printf "packagist/keywords/%s" (.)) | md5) }}
+                    <div class="col">
+                      <input type="checkbox" class="btn-check" id="btn-filter-{{ ($id) }}"/>
+                      <label class="btn btn-primary btn-sm" for="btn-filter-{{ ($id) }}">{{ . }}</label>
+                    </div>
+                {{ end }}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+{{ end }}
+
+<div class="row row-cols-1 row-cols-lg-2 row-cols-xl-3 g-3">
+    {{ range ($packages) }}
+        {{ $package := (getJSON ($url) "/vendors/" ($vendor) "/packages/" . "/info.json?ts=" ($ts) ($headers)) }}
+        {{ range ($package) }}
+            {{ $id := ((printf "%d.%s" (now.Unix) (delimit (shuffle (seq 999)) "")) | md5) }}
+            {{ $name := (index (split (.name) "/") 1) }}
+            {{ $keywords := slice }}
+            {{ range (.versions) }}{{ $keywords = (($keywords) | append (.keywords)) }}{{ end }}
+            {{ $keywords = (($keywords) | uniq) }}
+            <div class="col" data-keywords='{{ with ($keywords) }}{{ (delimit . " ") }}{{ end }}'>
+              <article class="card h-100" id="package-{{ ($id) }}">
+                <div class="card-header">
+                  <ul class="nav nav-tabs card-header-tabs" role="tablist">
+                    <li class="nav-item">
+                      <a title='{{ (i18n "home") }}' class="nav-link active" href="#" id="tab-home-{{ ($id) }}" data-bs-toggle="tab" data-bs-target="#tab-pane-home-{{ ($id) }}" role="tab" aria-controls="tab-pane-home-{{ ($id) }}" aria-selected="true">
+                        <i class="fas fa-home fa-fw"></i>
+                      </a>
+                    </li>
+                    <li class="nav-item">
+                      <a title='{{ (i18n "info") }}' class="nav-link" href="#" id="tab-info-{{ ($id) }}" data-bs-toggle="tab" data-bs-target="#tab-pane-info-{{ ($id) }}" role="tab" aria-controls="tab-pane-info-{{ ($id) }}" aria-selected="false">
+                        <i class="fas fa-info fa-fw"></i>
+                      </a>
+                    </li>
+                      {{ with ($keywords) }}
+                        <li class="nav-item">
+                          <a title='{{ (i18n "keywords") }}' class="nav-link" href="#" id="tab-keywords-{{ ($id) }}" data-bs-toggle="tab" data-bs-target="#tab-pane-keywords-{{ ($id) }}" role="tab" aria-controls="tab-pane-keywords-{{ ($id) }}" aria-selected="false">
+                            <i class="fas fa-tags fa-fw"></i>
+                          </a>
+                        </li>
+                      {{ end }}
+                  </ul>
+                </div>
+                <div class="tab-content h-100">
+                  <div class="tab-pane show active" id="tab-pane-home-{{ ($id) }}" role="tabpanel" aria-labelledby="tab-home-{{ ($id) }}" tabindex="0">
+                    <div class="card-body node-body">
+                      <div class="row g-3">
+                        <div class="col-sm-3">
+                          <div class="node-cover text-center">
+                            <a href="https://packagist.org/packages/{{ (.name) }}" target="_blank">
+                                {{ $gh_repo := (urls.Parse (.repository)) }}
+                              <img src="https://raw.githubusercontent.com{{ ($gh_repo.Path) }}/main/.github/logo.svg" class="img-fluid img-thumbnail rounded" alt="" loading="lazy"/>
+                            </a>
+                          </div>
+                        </div>
+                        <div class="col">
+                          <h5 class="card-title">
+                            <a href="https://packagist.org/packages/{{ (.name) }}" target="_blank">{{ ($name) }}</a>
+                          </h5>
+                          <p class="card-text">{{ (.description) }}</p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="tab-pane" id="tab-pane-info-{{ ($id) }}" role="tabpanel" aria-labelledby="tab-info-{{ ($id) }}" tabindex="0">
+                    <ul class="list-group list-group-flush node-body">
+                      <li class="list-group-item">
+                        <div class="row row-cols-1 row-cols-sm-2 g-0">
+                          <div class="col">{{ (i18n "type") }}</div>
+                          <div class="col">{{ (.type) }}</div>
+                        </div>
+                      </li>
+                        {{ if (.github_open_issues) }}
+                          <li class="list-group-item">
+                            <div class="row row-cols-1 row-cols-sm-2 g-0">
+                              <div class="col">{{ (i18n "issues") }}</div>
+                              <div class="col">
+                                <a href="{{ (.repository) }}/issues" target="_blank">{{ (.github_open_issues) }}</a>
+                              </div>
+                            </div>
+                          </li>
+                        {{ end }}
+                        {{ if (.github_stars) }}
+                          <li class="list-group-item">
+                            <div class="row row-cols-1 row-cols-sm-2 g-0">
+                              <div class="col">{{ (i18n "stars") }}</div>
+                              <div class="col">
+                                <a href="{{ (.repository) }}/stargazers" target="_blank">{{ (.github_stars) }}</a>
+                              </div>
+                            </div>
+                          </li>
+                        {{ end }}
+                        {{ if (.github_watchers) }}
+                          <li class="list-group-item">
+                            <div class="row row-cols-1 row-cols-sm-2 g-0">
+                              <div class="col">{{ (i18n "watchers") }}</div>
+                              <div class="col">
+                                <a href="{{ (.repository) }}/watchers" target="_blank">{{ (.github_watchers) }}</a>
+                              </div>
+                            </div>
+                          </li>
+                        {{ end }}
+                        {{ if (.github_forks) }}
+                          <li class="list-group-item">
+                            <div class="row row-cols-1 row-cols-sm-2 g-0">
+                              <div class="col">{{ (i18n "forks") }}</div>
+                              <div class="col">
+                                <a href="{{ (.repository) }}/network/members" target="_blank">{{ (.github_forks) }}</a>
+                              </div>
+                            </div>
+                          </li>
+                        {{ end }}
+                      <li class="list-group-item">
+                        <div class="row row-cols-1 row-cols-sm-2 g-0">
+                          <div class="col">{{ (i18n "downloads.total") }}</div>
+                          <div class="col">
+                            <a href="https://packagist.org/packages/{{ (.name) }}/stats" target="_blank">{{ (.downloads.total) }}</a>
+                          </div>
+                        </div>
+                      </li>
+                      <li class="list-group-item">
+                        <div class="row row-cols-1 row-cols-sm-2 g-0">
+                          <div class="col">{{ (i18n "downloads.monthly") }}</div>
+                          <div class="col">
+                            <a href="https://packagist.org/packages/{{ (.name) }}/stats" target="_blank">{{ (.downloads.monthly) }}</a>
+                          </div>
+                        </div>
+                      </li>
+                      <li class="list-group-item">
+                        <div class="row row-cols-1 row-cols-sm-2 g-0">
+                          <div class="col">{{ (i18n "downloads.daily") }}</div>
+                          <div class="col">
+                            <a href="https://packagist.org/packages/{{ (.name) }}/stats" target="_blank">{{ (.downloads.daily) }}</a>
+                          </div>
+                        </div>
+                      </li>
+                      <li class="list-group-item">
+                        <div class="row row-cols-1 row-cols-sm-2 g-0">
+                          <div class="col">{{ (i18n "date") }}</div>
+                          <div class="col">
+                            <time datetime="{{ (.time) }}" data-ext-fn="ext-date-local">
+                                {{ ((.time) | time.Format "2006/01/02 15:04:05 MST") }}
+                            </time>
+                          </div>
+                        </div>
+                      </li>
+                    </ul>
+                  </div>
+                    {{ with ($keywords) }}
+                      <div class="tab-pane" id="tab-pane-keywords-{{ ($id) }}" role="tabpanel" aria-labelledby="tab-keywords-{{ ($id) }}" tabindex="0">
+                        <div class="card-body">
+                          <div class="node-body">
+                            <div class="row row-cols-auto g-1">
+                                {{ range . }}
+                                  <div class="col">
+                                    <a class="btn btn-light" href="https://packagist.org/search/?tags={{ . }}" target="_blank" role="button">{{ . }}</a>
+                                  </div>
+                                {{ end }}
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    {{ end }}
+                </div>
+                <div class="card-footer text-muted">
+                  <ul class="list-inline m-0">
+                      {{ with (.repository) }}
+                        <li class="list-inline-item">
+                          <a title='{{ (i18n "repository") }}' class="btn btn-light btn-sm text-muted" href="{{ . }}" target="_blank" role="button">
+                            <i class="fab fa-github fa-fw"></i>
+                          </a>
+                        </li>
+                      {{ end }}
+                    <li class="list-inline-item">
+                      <a title='{{ (i18n "downloads.total") }}' class="btn btn-light btn-sm text-muted" href="https://packagist.org/packages/{{ (.name) }}/stats" target="_blank" role="button">
+                        <i class="fas fa-download fa-fw me-1"></i>
+                          {{ (.downloads.total) }}
+                      </a>
+                    </li>
+                    <li class="list-inline-item">
+                      <button title='{{ (i18n "versions") }}' type="button" class="btn btn-light btn-sm text-muted" data-bs-toggle="modal" data-bs-target="#modal-versions-{{ ($id) }}">
+                        <i class="fas fa-code-branch fa-fw"></i>
+                      </button>
+                    </li>
+                    <li class="list-inline-item">
+                      <button title='{{ (i18n "maintainers") }}' type="button" class="btn btn-light btn-sm text-muted" data-bs-toggle="modal" data-bs-target="#modal-maintainers-{{ ($id) }}">
+                        <i class="fas fa-users fa-fw"></i>
+                      </button>
+                    </li>
+                  </ul>
+                </div>
+              </article>
+              <article class="modal fade" id="modal-versions-{{ ($id) }}" tabindex="-1" aria-hidden="true">
+                <div class="modal-dialog modal-xl modal-dialog-scrollable">
+                  <div class="modal-content shadow-lg">
+                    <div class="modal-header">
+                      <h5 class="modal-title">
+                          {{ (i18n "versions") }}
+                        <a href="https://packagist.org/packages/{{ (.name) }}" target="_blank">{{ ($name) }}</a>
+                      </h5>
+                      <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label='{{ (i18n "close") }}'></button>
+                    </div>
+                    <div class="modal-body">
+                      <div class="accordion accordion-flush" id="accordion-versions-{{ ($id) }}">
+                          {{ range $k, $v := (sort (.versions) ".time" "desc") }}
+                              {{ $vid := ((printf "%d.%s" (now.Unix) (delimit (shuffle (seq 999)) "")) | md5) }}
+                              <div class="accordion-item">
+                                <h2 class="accordion-header" id="accordion-header-versions-{{ $vid }}">
+                                  <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#accordion-collapse-versions-{{ $vid }}" aria-expanded="false" aria-controls="accordion-collapse-versions-{{ $vid }}">
+                                      {{ (.version) }}
+                                  </button>
+                                </h2>
+                                <div id="accordion-collapse-versions-{{ $vid }}" class="accordion-collapse collapse" aria-labelledby="accordion-header-versions-{{ $vid }}" data-bs-parent="#accordion-versions-{{ ($id) }}">
+                                  <div class="accordion-body node-body">
+                                    <ul class="list-group list-group-flush">
+                                      <li class="list-group-item">
+                                        <div class="row row-cols-1 row-cols-sm-2 g-0">
+                                          <div class="col">{{ (i18n "version") }}</div>
+                                          <div class="col"><code>{{ (.version) }}</code></div>
+                                        </div>
+                                      </li>
+                                      <li class="list-group-item">
+                                        <div class="row row-cols-1 row-cols-sm-2 g-0">
+                                          <div class="col">{{ (i18n "type") }}</div>
+                                          <div class="col">{{ (.type) }}</div>
+                                        </div>
+                                      </li>
+                                      <li class="list-group-item">
+                                        <div class="row row-cols-1 row-cols-sm-2 g-0">
+                                          <div class="col">{{ (i18n "license") }}</div>
+                                          <div class="col">
+                                            <ul class="list-unstyled">
+                                                {{ range (.license) }}
+                                                  <li>
+                                                    <a href="https://choosealicense.com/licenses/{{ (. | urlize) }}/" target="_blank" rel="noopener nofollow">{{ . }}</a>
+                                                  </li>
+                                                {{ end }}
+                                            </ul>
+                                          </div>
+                                        </div>
+                                      </li>
+                                      <li class="list-group-item">
+                                        <div class="row row-cols-1 row-cols-sm-2 g-0">
+                                          <div class="col">{{ (i18n "authors") }}</div>
+                                          <div class="col">
+                                            <div class="row row-cols-1 g-2">
+                                                {{ range (.authors) }}
+                                                  <div class="col">
+                                                    <ul class="list-unstyled">
+                                                      <li>
+                                                          {{ (.name) }}
+                                                          {{ with (.email) }}
+                                                            <a title='{{ (i18n "email") }}' href="mailto:{{ . }}">
+                                                              <i class="far fa-envelope fa-fw"></i>
+                                                            </a>
+                                                          {{ end }}
+                                                          {{ with (.homepage) }}
+                                                            <a title='{{ (i18n "site") }}' href="{{ . }}" target="_blank" rel="noopener nofollow">
+                                                              <i class="fas fa-globe fa-fw"></i>
+                                                            </a>
+                                                          {{ end }}
+                                                      </li>
+                                                        {{ with (.role) }}
+                                                          <li class="text-muted">{{ . }}</li>
+                                                        {{ end }}
+                                                    </ul>
+                                                  </div>
+                                                {{ end }}
+                                            </div>
+                                          </div>
+                                        </div>
+                                      </li>
+                                      <li class="list-group-item">
+                                        <div class="row row-cols-1 row-cols-sm-2 g-0">
+                                          <div class="col">{{ (i18n "support") }}</div>
+                                          <div class="col">
+                                              {{ range $key, $value := (.support) }}
+                                                <div>
+                                                  <a href="{{ ($value) }}" target="_blank">{{ (i18n $key) }}</a>
+                                                </div>
+                                              {{ end }}
+                                          </div>
+                                        </div>
+                                      </li>
+                                      <li class="list-group-item">
+                                        <div class="row row-cols-1 row-cols-sm-2 g-0">
+                                          <div class="col">{{ (i18n "keywords") }}</div>
+                                          <div class="col">{{ (delimit (.keywords) ", ") }}</div>
+                                        </div>
+                                      </li>
+                                      <li class="list-group-item">
+                                        <div class="row row-cols-1 row-cols-sm-2 g-0">
+                                          <div class="col">{{ (i18n "date") }}</div>
+                                          <div class="col">
+                                            <time datetime="{{ (.time) }}" data-ext-fn="ext-date-local">
+                                                {{ ((.time) | time.Format "2006/01/02 15:04:05 MST") }}
+                                            </time>
+                                          </div>
+                                        </div>
+                                      </li>
+                                    </ul>
+                                  </div>
+                                </div>
+                              </div>
+                          {{ end }}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </article>
+              <article class="modal fade" id="modal-maintainers-{{ ($id) }}" tabindex="-1" aria-hidden="true">
+                <div class="modal-dialog modal-xl modal-dialog-scrollable">
+                  <div class="modal-content shadow-lg">
+                    <div class="modal-header">
+                      <h5 class="modal-title">
+                          {{ (i18n "maintainers") }}
+                        <a href="https://packagist.org/packages/{{ (.name) }}" target="_blank">{{ ($name) }}</a>
+                      </h5>
+                      <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label='{{ (i18n "close") }}'></button>
+                    </div>
+                    <div class="modal-body">
+                      <div class="row row-cols-auto g-3">
+                          {{ range (.maintainers) }}
+                            <div class="col">
+                              <a title="{{ (.name) }}" href="https://packagist.org/users/{{ (.name) }}/" target="_blank">
+                                <img src="{{ (.avatar_url) }}" class="img-fluid img-thumbnail rounded" alt="{{ (.name) }}" loading="lazy"/>
+                              </a>
+                            </div>
+                          {{ end }}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </article>
+            </div>
+        {{ end }}
+    {{ else }}
+      <div class="col">
+          {{ (partial "function/alert" (dict
+          "type" "warning"
+          "icon" "fas fa-triangle-exclamation"
+          "msg" "alert.php.packages_not_found"
+          )) }}
+      </div>
+    {{ end }}
+</div>

@@ -1,0 +1,7 @@
+{{ $id := ((.id) | default (printf "alert-%s" (delimit (shuffle (seq 999)) "" | md5))) }}
+{{ $type := ((.type) | default "primary") }}
+{{ $icon := ((.icon) | default "fas fa-info") }}
+{{ $msg := ((.msg) | default "") }}
+
+{{ $alert := ((printf "<div class='alert alert-%s d-flex align-items-center node-body' id='%s' role='alert'><div class='flex-shrink-0'><i class='%s fa-fw fa-2x'></i></div><div class='flex-grow-1 ms-3'><p class='mb-0'>%s</p></div></div>" ($type) ($id) ($icon) (i18n $msg)) | safeHTML) }}
+{{ return ($alert) }}

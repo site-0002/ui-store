@@ -1,0 +1,59 @@
+{{ $url_github := (($.Site.Data.api.github.url) | default "") }}
+{{ with $url_github }}
+    {{ $owner := (($.Site.Data.api.github.owner) | default "") }}
+    {{ $ts := (now.Format "2006-01-02") }}
+    {{ $headers := (dict "User-Agent" (($.Site.Data.api.user_agent) | default "")) }}
+
+    {{ $repos := (getJSON ($url_github) "/orgs/" ($owner) "/repos.json?ts=" ($ts) ($headers)) }}
+    {{ $topics := slice }}
+
+    {{ range ($repos) }}
+        {{ if (not (in . ".")) }}
+            {{ $repo := (getJSON ($url_github) "/orgs/" ($owner) "/repos/" . "/info.json?ts=" ($ts) ($headers)) }}
+            {{ $topics = (($topics) | append ($repo.topics)) }}
+        {{ end }}
+    {{ end }}
+
+    {{ $topics = (($topics) | uniq) }}
+
+    {{ with ($topics)}}
+        {{ $id := ((printf "github/topics/%s" "all") | md5) }}
+        body:has(#btn-filter-{{ ($id) }}:not(:checked)) [data-topics] { display: none; }
+
+        {{ range (sort .) }}
+            {{ $id := ((printf "github/topics/%s" (.)) | md5) }}
+            body:has(#btn-filter-{{ ($id) }}:checked) [data-topics~="{{ . }}"] { display: block; }
+        {{ end }}
+    {{ end }}
+{{ end }}
+
+{{ $url_packagist := (($.Site.Data.api.packagist.url) | default "") }}
+{{ with $url_packagist }}
+    {{ $vendor := (($.Site.Data.api.packagist.vendor) | default "") }}
+    {{ $ts := (now.Format "2006-01-02") }}
+    {{ $headers := (dict "User-Agent" (($.Site.Data.api.user_agent) | default "")) }}
+
+    {{ $packages := (getJSON ($url_packagist) "/vendors/" ($vendor) "/packages.json?ts=" ($ts) ($headers)) }}
+    {{ $keywords := slice }}
+
+    {{ range ($packages) }}
+        {{ $package := (getJSON ($url_packagist) "/vendors/" ($vendor) "/packages/" . "/info.json?ts=" ($ts) ($headers)) }}
+        {{ range ($package) }}
+            {{ range (.versions) }}
+                {{ $keywords = (($keywords) | append (.keywords)) }}
+            {{ end }}
+        {{ end }}
+    {{ end }}
+
+    {{ $keywords = (($keywords) | uniq) }}
+
+    {{ with ($keywords) }}
+        {{ $id := ((printf "packagist/keywords/%s" "all") | md5) }}
+        body:has(#btn-filter-{{ ($id) }}:not(:checked)) [data-keywords] { display: none; }
+
+        {{ range (sort .) }}
+            {{ $id := ((printf "packagist/keywords/%s" (.)) | md5) }}
+            body:has(#btn-filter-{{ ($id) }}:checked) [data-keywords~="{{ . }}"] { display: block; }
+        {{ end }}
+    {{ end }}
+{{ end }}

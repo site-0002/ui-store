@@ -1,0 +1,192 @@
+# -------------------------------------------------------------------------------------------------------------------- #
+# General
+# -------------------------------------------------------------------------------------------------------------------- #
+
+[archived]
+other = "Archived"
+
+[authors]
+other = "Authors"
+
+[close]
+other = "Close"
+
+[collaborators]
+other = "Collaborators"
+
+[created_at]
+other = "Created"
+
+[date]
+other = "Date"
+
+[docs]
+other = "Docs"
+
+[downloads.daily]
+other = "Daily downloads"
+
+[downloads.monthly]
+other = "Monthly downloads"
+
+[downloads.total]
+other = "Total downloads"
+
+[egg]
+other = "Oops!"
+
+[email]
+other = "E-mail"
+
+[filters]
+other = "Filters"
+
+[followers]
+other = "Followers"
+
+[following]
+other = "Following"
+
+[forks]
+other = "Forks"
+
+[forum]
+other = "Forum"
+
+[github]
+other = "GitHub"
+
+[home]
+other = "Home"
+
+[info]
+other = "Information"
+
+[issues]
+other = "Issues"
+
+[keywords]
+other = "Keywords"
+
+[language]
+other = "Language"
+
+[languages]
+other = "Languages"
+
+[license]
+other = "License"
+
+[linux]
+other = "Linux"
+
+[members]
+other = "Members"
+
+[packages]
+other = "Packages"
+
+[php]
+other = "PHP"
+
+[project]
+other = "Project"
+
+[pushed_at]
+other = "Pushed"
+
+[readme]
+other = "Readme"
+
+[repositories]
+other = "Repositories"
+
+[repository]
+other = "Repository"
+
+[requires]
+other = "Requires"
+
+[site_resize]
+other = "Resize site"
+
+[site]
+other = "Site"
+
+[source]
+other = "Source"
+
+[stars]
+other = "Stars"
+
+[suggests]
+other = "Suggests"
+
+[support]
+other = "Support"
+
+[topics_all]
+other = "All Topics"
+
+[topics]
+other = "Topics"
+
+[type]
+other = "Type"
+
+[updated_at]
+other = "Updated"
+
+[version]
+other = "Version"
+
+[versions]
+other = "Versions"
+
+[watchers]
+other = "Watchers"
+
+[keywords_all]
+other = "All Keywords"
+
+[maintainers]
+other = "Maintainers"
+
+# -------------------------------------------------------------------------------------------------------------------- #
+# GPG.
+# -------------------------------------------------------------------------------------------------------------------- #
+
+[gpg.gpg]
+other = "GPG"
+
+[gpg.key_id]
+other = "Key ID"
+
+[gpg.key_raw]
+other = "Key RAW"
+
+[gpg.subkeys]
+other = "Subkeys"
+
+# -------------------------------------------------------------------------------------------------------------------- #
+# Browser console.
+# -------------------------------------------------------------------------------------------------------------------- #
+
+[console.buy_me]
+other = "Buy me a"
+
+[console.about_me]
+other = "About me"
+
+# -------------------------------------------------------------------------------------------------------------------- #
+# Alerts.
+# -------------------------------------------------------------------------------------------------------------------- #
+
+[alert.github.members_not_found]
+other = "Members not found."
+
+[alert.github.repos_not_found]
+other = "Repositories not found."
+
+[alert.php.packages_not_found]
+other = "Packages not found."

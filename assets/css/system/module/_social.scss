@@ -1,0 +1,220 @@
+$sites: (
+  'addtofavorites': (
+    background: #f9a600
+  ),
+  'behance': (
+    background: #1769ff
+  ),
+  'bitbucket': (
+    background: #205081
+  ),
+  'blogger': (
+    background: #ff6501
+  ),
+  'buymeacoffee': (
+    background: #ffdd00,
+    color: #222222
+  ),
+  'codepen': (
+    background: #000
+  ),
+  'comments': (
+    background: #333
+  ),
+  'delicious': (
+    background: #3274d1
+  ),
+  'deviantart': (
+    background: #475c4d
+  ),
+  'digg': (
+    background: #000
+  ),
+  'discord': (
+    background: #7289da
+  ),
+  'dribbble': (
+    background: #ea4c89
+  ),
+  'email': (
+    background: #000
+  ),
+  'etsy': (
+    background: #f1641e
+  ),
+  'facebook': (
+    background: #1977f3
+  ),
+  'fbmessenger': (
+    background: #2998ff
+  ),
+  'flickr': (
+    background: #1c9be9
+  ),
+  'github': (
+    background: #333
+  ),
+  'gitlab': (
+    background: #f96424
+  ),
+  'google': (
+    background: #3a7cec
+  ),
+  'googleplus': (
+    background: #db483b
+  ),
+  'hackernews': (
+    background: #ff6500
+  ),
+  'news.ycombinator': (
+    background: #ff6500
+  ),
+  'houzz': (
+    background: #4dbc15
+  ),
+  'instagram': (
+    background: #e23367
+  ),
+  'ko-fi': (
+    background: #00b9fe
+  ),
+  'liberapay': (
+    background: #f6c915,
+    color: #1a171b
+  ),
+  'line': (
+    background: #00c300
+  ),
+  'linkedin': (
+    background: #0274b3
+  ),
+  'livejournal': (
+    background: #004359
+  ),
+  'medium': (
+    background: #02b875
+  ),
+  'mix': (
+    background: #ff8226
+  ),
+  'odnoklassniki': (
+    background: #f2720c
+  ),
+  'ok.ru': (
+    background: #f2720c
+  ),
+  'patreon': (
+    background: #e85b46
+  ),
+  'paypal': (
+    background: #0070ba
+  ),
+  'pdf': (
+    background: #e61b2e
+  ),
+  'phone': (
+    background: #1a73e8
+  ),
+  'pinterest': (
+    background: #cb2027
+  ),
+  'pocket': (
+    background: #ef4056
+  ),
+  'print': (
+    background: #6d9f00
+  ),
+  'reddit': (
+    background: #ff5600
+  ),
+  'renren': (
+    background: #005eac
+  ),
+  'rss': (
+    background: #ff7b0a
+  ),
+  'shortlink': (
+    background: #333
+  ),
+  'skype': (
+    background: #00aff0
+  ),
+  'sms': (
+    background: #35d54f
+  ),
+  'snapchat': (
+    background: #fffc00
+  ),
+  'soundcloud': (
+    background: #f50
+  ),
+  'stackoverflow': (
+    background: #f48024
+  ),
+  'stumbleupon': (
+    background: #eb4823
+  ),
+  'quora': (
+    background: #b92b27
+  ),
+  'telegram': (
+    background: #179cde
+  ),
+  't.me': (
+    background: #179cde
+  ),
+  'tiktok': (
+    background: #010101
+  ),
+  'tumblr': (
+    background: #314358
+  ),
+  'twitch': (
+    background: #4b367c
+  ),
+  'twitter': (
+    background: #1da1f2
+  ),
+  'viber': (
+    background: #574e92
+  ),
+  'vimeo': (
+    background: #00adef
+  ),
+  'vk': (
+    background: #4c75a3
+  ),
+  'wechat': (
+    background: #7bb32e
+  ),
+  'weibo': (
+    background: #e6162d
+  ),
+  'whatsapp': (
+    background: #60b82d
+  ),
+  'xing': (
+    background: #006567
+  ),
+  'yahoomail': (
+    background: #4a00a1
+  ),
+  'youtube': (
+    background: #ff0000
+  )
+);
+
+a {
+  &.btn {
+    &-social {
+      @each $site, $prop in $sites {
+        &[href*='#{$site}'] {
+          color: hsl(0, 0%, 100%);
+          color: map-get($prop, 'color');
+          border-color: map-get($prop, 'background');
+          background-color: map-get($prop, 'background');
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,77 @@
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"/>
+
+{{ $description := ($.Site.Params.description) }}
+{{ with (.Summary) }}{{ $description = . }}{{ end }}
+{{ with (.Description) }}{{ $description = . }}{{ end }}
+
+{{ $emoji := ($.Site.Data.ui.meta.title.emoji) }}
+{{ with ($emoji) }}{{ $emoji = (printf "%s " ($emoji)) }}{{ end }}
+
+<title>{{ ($emoji) }}{{ if (ne (.Title) ($.Site.Title)) }}{{ (.Title) }} / {{ end }}{{ ($.Site.Title) }}</title>
+<meta name="title" content="{{ if (ne (.Title) ($.Site.Title)) }}{{ (.Title) }} / {{ end }}{{ ($.Site.Title) }}"/>
+<meta name="description" content="{{ ((($description) | plainify) | chomp) }}"/>
+
+<!--[ dns-prefetch ]-->
+{{ $dns_prefetch := ($.Site.Data.ui.network.dns_prefetch) }}
+{{ range ($dns_prefetch) }}
+  <link rel="dns-prefetch" href="{{ . }}"/>
+{{ end }}
+<!--[ / dns-prefetch ]-->
+
+<!--[ pre-connect ]-->
+{{ $pre_connect := ($.Site.Data.ui.network.pre_connect) }}
+{{ range ($pre_connect) }}
+  <link rel="preconnect" href="{{ . }}" crossorigin="anonymous"/>
+{{ end }}
+<!--[ / pre-connect ]-->
+
+<!--[ ui-fonts ]-->
+{{ (partial "ui.fonts" .) }}
+<!--[ / ui-fonts ]-->
+
+<!--[ ui-styles ]-->
+{{ (partial "ui.css" .) }}
+<!--[ / ui-styles ]-->
+
+<!--[ ui-icons ]-->
+{{ (partial "ui.icons" .) }}
+<!--[ / ui-icons ]-->
+
+<!--[ pre-load-js ]-->
+{{ $scripts := ($.Site.Data.ui.scripts) }}
+{{ with ($scripts.vendor.external) }}
+    {{ range . }}
+      <link rel="preload" href="{{ . }}" as="script" crossorigin="anonymous"/>
+    {{ end }}
+{{ end }}
+<!--[ / pre-load-js ]-->
+
+<meta name="application-name" content="{{ ($.Site.Title) }}"/>
+
+<!--[ canonical ]-->
+<link rel="canonical" href="{{ (.Permalink) }}"/>
+<!--[ / canonical ]-->
+
+<!--[ languages ]-->
+{{ if (.IsTranslated) }}
+    {{ range (.Translations) }}
+      <link rel="alternate" href="{{ (.Permalink) }}" hreflang="{{ (.Lang) }}"/>
+    {{ end }}
+{{ else }}
+    {{ range (.Site.Languages) }}
+        {{ if (ne ($.Site.Language.Lang) (.Lang)) }}
+          <link rel="alternate" href="{{ ((.Lang) | absURL) }}" hreflang="{{ (.Lang) }}"/>
+        {{ end }}
+    {{ end }}
+{{ end }}
+<!--[ / languages ]-->
+
+<!--[ output-formats ]-->
+{{ range (.AlternativeOutputFormats) }}
+  <link rel="{{ (.Rel) }}" type="{{ (.MediaType.Type) }}" href="{{ ((.Permalink) | safeURL) }}" title="{{ ($.Site.Title) }}"/>
+{{ end }}
+<!--[ / output-formats ]-->
+
+{{ template "_internal/twitter_cards.html" . }}
+{{ template "_internal/opengraph.html" . }}

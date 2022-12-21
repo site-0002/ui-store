@@ -1,0 +1,36 @@
+{{ $x := ((.context) | default .) }}
+{{ $id := ((.id) | default "") }}
+{{ $active := ("") }}
+
+{{ range (index ($x.Site.Menus) ($id)) }}
+
+    {{ $active = (or ($x.IsMenuCurrent .Menu .) ($x.HasMenuCurrent .Menu .)) }}
+    {{ $active = (or (or ($active) (eq (.Name) ($x.Title))) (or ($active) (eq (.Identifier) ($x.Section)))) }}
+
+    {{ if (.HasChildren) }}
+      <li class="nav-item dropdown">
+        <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+            {{ if (.Pre) }}<i class="{{ (.Pre) }} fa-fw"></i>{{ end }}
+          <span>{{ (.Name) }}</span>
+        </a>
+        <div class="dropdown-menu shadow">
+            {{ range (.Children) }}
+                {{ $active = (or ($x.IsMenuCurrent .Menu .) ($x.HasMenuCurrent .Menu .)) }}
+                {{ $active = (or (or ($active) (eq (.Name) ($x.Title))) (or ($active) (eq (.Identifier) ($x.Section)))) }}
+                <a class="dropdown-item {{ if ($active) }}active{{ end }}" href="{{ ((.URL) | relURL) }}">
+                    {{ if (.Pre) }}<i class="{{ (.Pre) }} fa-fw"></i>{{ end }}
+                  <span>{{ (.Name) }}</span>
+                </a>
+            {{ end }}
+        </div>
+      </li>
+    {{ else }}
+      <li class="nav-item">
+        <a class="nav-link {{ if ($active) }}active{{ end }}" href="{{ ((.URL) | relURL) }}">
+            {{ if (.Pre) }}<i class="{{ (.Pre) }} fa-fw"></i>{{ end }}
+          <span>{{ (.Name) }}</span>
+        </a>
+      </li>
+    {{ end }}
+
+{{ end }}

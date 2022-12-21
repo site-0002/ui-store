@@ -1,0 +1,131 @@
+{{ $url := (($.Site.Data.api.github.url) | default "") }}
+{{ $owner := (($.Site.Data.api.github.owner) | default "") }}
+{{ $ts := (now.Format "2006-01-02") }}
+{{ $headers := (dict "User-Agent" (($.Site.Data.api.user_agent) | default "")) }}
+
+{{ $info := (getJSON ($url) "/orgs/" ($owner) "/info.json?ts=" ($ts) ($headers)) }}
+
+{{ with ($info) }}
+  <div class="accordion mb-3" id="accordion-github-org-info">
+    <div class="accordion-item">
+      <h2 class="accordion-header" id="accordion-header-github-org-info">
+        <button class="accordion-button collapsed text-uppercase" type="button" data-bs-toggle="collapse" data-bs-target="#accordion-collapse-github-org-info" aria-expanded="false" aria-controls="accordion-collapse-github-org-info">
+            {{ ((.name) | default (.login)) }}
+        </button>
+      </h2>
+      <div id="accordion-collapse-github-org-info" class="accordion-collapse collapse" aria-labelledby="accordion-header-github-org-info" data-bs-parent="#accordion-github-org-info">
+        <div class="accordion-body node-body">
+          <div class="row g-3">
+            <div class="col-lg-3">
+              <div class="node-cover text-center">
+                <a href="{{ (.html_url) }}" target="_blank">
+                  <img src="{{ (.avatar_url) }}" class="img-fluid img-thumbnail rounded" alt="" loading="lazy"/>
+                </a>
+              </div>
+            </div>
+            <div class="col">
+              <ul class="list-group list-group-flush">
+                  {{ with (.blog) }}
+                    <li class="list-group-item">
+                      <div class="row row-cols-1 row-cols-sm-2 g-0">
+                          {{ $url := (urls.Parse .) }}{{ $scheme := "http://" }}
+                          {{ if ($url.Scheme) }}{{ $scheme = "" }}{{ end }}
+                        <div class="col">{{ (i18n "site") }}</div>
+                        <div class="col">
+                          <a href="{{ ($scheme) }}{{ . }}" target="_blank">{{ . }}</a>
+                        </div>
+                      </div>
+                    </li>
+                  {{ end }}
+                  {{ with (.location) }}
+                    <li class="list-group-item">
+                      <div class="row row-cols-1 row-cols-sm-2 g-0">
+                        <div class="col">{{ (i18n "location") }}</div>
+                        <div class="col">{{ . }}</div>
+                      </div>
+                    </li>
+                  {{ end }}
+                  {{ with (.email) }}
+                    <li class="list-group-item">
+                      <div class="row row-cols-1 row-cols-sm-2 g-0">
+                        <div class="col">{{ (i18n "email") }}</div>
+                        <div class="col">
+                          <a href="mailto:{{ . }}">{{ . }}</a>
+                        </div>
+                      </div>
+                    </li>
+                  {{ end }}
+                  {{ with (.twitter_username) }}
+                    <li class="list-group-item">
+                      <div class="row row-cols-1 row-cols-sm-2 g-0">
+                        <div class="col">{{ (i18n "twitter") }}</div>
+                        <div class="col">{{ . }}</div>
+                      </div>
+                    </li>
+                  {{ end }}
+                  {{ with (.public_repos) }}
+                    <li class="list-group-item">
+                      <div class="row row-cols-1 row-cols-sm-2 g-0">
+                        <div class="col">{{ (i18n "public_repos") }}</div>
+                        <div class="col">{{ . }}</div>
+                      </div>
+                    </li>
+                  {{ end }}
+                  {{ with (.total_private_repos) }}
+                    <li class="list-group-item">
+                      <div class="row row-cols-1 row-cols-sm-2 g-0">
+                        <div class="col">{{ (i18n "private_repos") }}</div>
+                        <div class="col">{{ . }}</div>
+                      </div>
+                    </li>
+                  {{ end }}
+                  {{ if (.disk_usage) }}
+                    <li class="list-group-item">
+                      <div class="row row-cols-1 row-cols-sm-2 g-0">
+                        <div class="col">{{ (i18n "disk_usage") }}</div>
+                        <div class="col">{{ ((.disk_usage) | int) }} {{ with (.plan) }}/ {{ ((.space) | int) }}{{ end }}</div>
+                      </div>
+                    </li>
+                  {{ end }}
+                  {{ with (.created_at) }}
+                    <li class="list-group-item">
+                      <div class="row row-cols-1 row-cols-sm-2 g-0">
+                        <div class="col">{{ (i18n "created_at") }}</div>
+                        <div class="col">
+                          <time datetime="{{ . }}" data-ext-fn="ext-date-local">
+                              {{ (. | time.Format "2006/01/02 15:04:05 MST") }}
+                          </time>
+                        </div>
+                      </div>
+                    </li>
+                  {{ end }}
+                  {{ with (.updated_at) }}
+                    <li class="list-group-item">
+                      <div class="row row-cols-1 row-cols-sm-2 g-0">
+                        <div class="col">{{ (i18n "updated_at") }}</div>
+                        <div class="col">
+                          <time datetime="{{ . }}" data-ext-fn="ext-date-local">
+                              {{ (. | time.Format "2006/01/02 15:04:05 MST") }}
+                          </time>
+                        </div>
+                      </div>
+                    </li>
+                  {{ end }}
+                  {{ with (.description) }}
+                    <li class="list-group-item">
+                      <div class="row row-cols-1 row-cols-sm-2 g-0">
+                        <div class="col">{{ (i18n "description") }}</div>
+                        <div class="col">
+                            {{ . }}
+                        </div>
+                      </div>
+                    </li>
+                  {{ end }}
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+{{ end }}

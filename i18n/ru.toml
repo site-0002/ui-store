@@ -1,0 +1,213 @@
+# -------------------------------------------------------------------------------------------------------------------- #
+# General
+# -------------------------------------------------------------------------------------------------------------------- #
+
+[archived]
+other = "В архиве"
+
+[authors]
+other = "Авторы"
+
+[close]
+other = "Закрыть"
+
+[collaborators]
+other = "Сторонние участники"
+
+[created_at]
+other = "Создание"
+
+[date]
+other = "Дата"
+
+[docs]
+other = "Документация"
+
+[downloads.daily]
+other = "Скачиваний за день"
+
+[downloads.monthly]
+other = "Скачиваний за месяц"
+
+[downloads.total]
+other = "Всего скачиваний"
+
+[egg]
+other = "Oops!"
+
+[email]
+other = "E-mail"
+
+[filters]
+other = "Фильтры"
+
+[followers]
+other = "Подписчики"
+
+[following]
+other = "Подписка"
+
+[forks]
+other = "Ответвления"
+
+[forum]
+other = "Форум"
+
+[github]
+other = "GitHub"
+
+[home]
+other = "Главная"
+
+[info]
+other = "Информация"
+
+[issues]
+other = "Вопросы"
+
+[keywords]
+other = "Ключевые слова"
+
+[language]
+other = "Язык разработки"
+
+[languages]
+other = "Языки"
+
+[license]
+other = "Лицензия"
+
+[linux]
+other = "Linux"
+
+[members]
+other = "Участники"
+
+[packages]
+other = "Пакеты"
+
+[php]
+other = "PHP"
+
+[project]
+other = "Проект"
+
+[pushed_at]
+other = "Комментарий"
+
+[readme]
+other = "Readme"
+
+[repositories]
+other = "Репозитории"
+
+[repository]
+other = "Репозиторий"
+
+[requires]
+other = "Требует"
+
+[site_resize]
+other = "Изменить размер сайта"
+
+[site]
+other = "Сайт"
+
+[source]
+other = "Исходный код"
+
+[stars]
+other = "Звёзды"
+
+[suggests]
+other = "Предлагает"
+
+[support]
+other = "Поддержка"
+
+[topics_all]
+other = "Все тематики"
+
+[topics]
+other = "Тематика"
+
+[type]
+other = "Тип"
+
+[updated_at]
+other = "Обновление"
+
+[version]
+other = "Версия"
+
+[versions]
+other = "Версии"
+
+[watchers]
+other = "Наблюдатели"
+
+[keywords_all]
+other = "Все ключевые слова"
+
+[maintainers]
+other = "Сопровождающие"
+
+[location]
+other = "Местонахождение"
+
+[twitter]
+other = "Twitter"
+
+[public_repos]
+other = "Публичные репозитории"
+
+[private_repos]
+other = "Приватные репозитории"
+
+[description]
+other = "Описание"
+
+[disk_usage]
+other = "Использование диска"
+
+[groups]
+other = "Группы"
+
+# -------------------------------------------------------------------------------------------------------------------- #
+# GPG.
+# -------------------------------------------------------------------------------------------------------------------- #
+
+[gpg.gpg]
+other = "GPG"
+
+[gpg.key_id]
+other = "ID ключа"
+
+[gpg.key_raw]
+other = "Код ключа"
+
+[gpg.subkeys]
+other = "Под-ключи"
+
+# -------------------------------------------------------------------------------------------------------------------- #
+# Browser console.
+# -------------------------------------------------------------------------------------------------------------------- #
+
+[console.buy_me]
+other = "Купите мне"
+
+[console.about_me]
+other = "Обо мне"
+
+# -------------------------------------------------------------------------------------------------------------------- #
+# Alerts.
+# -------------------------------------------------------------------------------------------------------------------- #
+
+[alert.github.members_not_found]
+other = "Участники не найдены."
+
+[alert.github.repos_not_found]
+other = "Репозитории не найдены."
+
+[alert.php.packages_not_found]
+other = "Пакеты не найдены."

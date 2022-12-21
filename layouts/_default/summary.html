@@ -1,0 +1,3 @@
+{{ $more := "<!--more-->" }}
+
+{{ if (in (.RawContent) ($more)) }}{{ (.Summary) }}{{ else }}<p>{{ (.Summary) }}</p>{{ end }}

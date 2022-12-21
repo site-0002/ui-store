@@ -1,0 +1,181 @@
+{{ $url := (($.Site.Data.api.github.url) | default "") }}
+{{ $owner := (($.Site.Data.api.github.owner) | default "") }}
+{{ $ts := (now.Format "2006-01-02") }}
+{{ $headers := (dict "User-Agent" (($.Site.Data.api.user_agent) | default "")) }}
+
+{{ $members := (getJSON ($url) "/orgs/" ($owner) "/collaborators.json?ts=" ($ts) ($headers)) }}
+
+<div class="row row-cols-1 row-cols-lg-2 g-3">
+    {{ range ($members) }}
+        {{ $member := (getJSON ($url) "/orgs/" ($owner) "/members/" . "/info.json?ts=" ($ts) ($headers)) }}
+        {{ $gpg := (getJSON ($url) "/orgs/" ($owner) "/members/" . "/gpg.json?ts=" ($ts) ($headers)) }}
+        {{ $id := ((printf "github/org/collaborators.%d.%s" (now.Unix) (delimit (shuffle (seq 999)) "")) | md5) }}
+        <div class="col">
+          <article class="card h-100" id="member-{{ ($id) }}">
+            <h5 class="card-header">
+              <a href="{{ ($member.html_url) }}" target="_blank">{{ (($member.name) | default ($member.login)) }}</a>
+            </h5>
+            <div class="card-body node-body">
+              <div class="row g-3">
+                <div class="col-sm-3">
+                  <div class="node-cover text-center">
+                    <a href="{{ ($member.html_url) }}" target="_blank">
+                      <img src="{{ ($member.avatar_url) }}" class="img-fluid img-thumbnail rounded" alt="" loading="lazy"/>
+                    </a>
+                  </div>
+                </div>
+                <div class="col">
+                  <p class="card-text">{{ (($member.bio) | plainify) }}</p>
+                </div>
+              </div>
+            </div>
+            <div class="card-footer text-muted">
+              <ul class="list-inline m-0">
+                  {{ if ($member.public_repos) }}
+                    <li class="list-inline-item">
+                      <a title='{{ (i18n "repositories") }}' class="btn btn-light btn-sm text-muted" href="{{ ($member.html_url) }}?tab=repositories" target="_blank" role="button">
+                        <i class="fas fa-folder fa-fw me-1"></i>
+                          {{ ($member.public_repos) }}
+                      </a>
+                    </li>
+                  {{ end }}
+                  {{ if ($member.followers) }}
+                    <li class="list-inline-item">
+                      <a title='{{ (i18n "followers") }}' class="btn btn-light btn-sm text-muted" href="{{ ($member.html_url) }}?tab=followers" target="_blank" role="button">
+                        <i class="fas fa-user-friends fa-fw me-1"></i>
+                          {{ ($member.followers) }}
+                      </a>
+                    </li>
+                  {{ end }}
+                  {{ if ($member.following) }}
+                    <li class="list-inline-item">
+                      <a title='{{ (i18n "following") }}' class="btn btn-light btn-sm text-muted" href="{{ ($member.html_url) }}?tab=following" target="_blank" role="button">
+                        <i class="fas fa-user-check fa-fw me-1"></i>
+                          {{ ($member.following) }}
+                      </a>
+                    </li>
+                  {{ end }}
+                  {{ with ($member.email) }}
+                    <li class="list-inline-item">
+                      <a title='{{ (i18n "email") }}' class="btn btn-light btn-sm text-muted" href="mailto:{{ . }}" role="button">
+                        <i class="far fa-envelope fa-fw"></i>
+                      </a>
+                    </li>
+                  {{ end }}
+                  {{ with ($member.blog) }}
+                      {{ $url := (urls.Parse .) }}{{ $scheme := "http://" }}
+                      {{ if ($url.Scheme) }}{{ $scheme = "" }}{{ end }}
+                      <li class="list-inline-item">
+                        <a title='{{ (i18n "site") }}' class="btn btn-light btn-sm text-muted" href="{{ ($scheme) }}{{ . }}" target="_blank" rel="noopener nofollow" role="button">
+                          <i class="fas fa-globe fa-fw"></i>
+                        </a>
+                      </li>
+                  {{ end }}
+                  {{ if ($gpg) }}
+                    <li class="list-inline-item">
+                      <button title='{{ (i18n "gpg.gpg") }}' type="button" class="btn btn-light btn-sm text-muted" data-bs-toggle="modal" data-bs-target="#modal-gpg-{{ ($id) }}">
+                        <i class="fas fa-key fa-fw"></i>
+                      </button>
+                    </li>
+                  {{ end }}
+              </ul>
+            </div>
+          </article>
+            {{ if ($gpg) }}
+              <article class="modal fade" id="modal-gpg-{{ ($id) }}" tabindex="-1" aria-hidden="true">
+                <div class="modal-dialog modal-xl modal-dialog-scrollable">
+                  <div class="modal-content shadow-lg">
+                    <div class="modal-header">
+                      <h5 class="modal-title">
+                          {{ (i18n "gpg.gpg") }}
+                        <a href="{{ ($member.html_url) }}" target="_blank">{{ (($member.name) | default ($member.login)) }}</a>
+                      </h5>
+                      <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label='{{ (i18n "close") }}'></button>
+                    </div>
+                    <div class="modal-body">
+                      <div class="accordion accordion-flush" id="accordion-gpg-{{ ($id) }}">
+                          {{ range ($gpg) }}
+                            <div class="accordion-item">
+                              <h2 class="accordion-header" id="accordion-header-gpg-{{ ($id) }}-{{ (.key_id) }}">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#accordion-collapse-gpg-{{ ($id) }}-{{ (.key_id) }}" aria-expanded="false" aria-controls="accordion-collapse-gpg-{{ ($id) }}-{{ (.key_id) }}">
+                                  <time class="me-3" datetime="{{ (.created_at) }}" data-ext-fn="ext-date-local">
+                                      {{ ((.created_at) | time.Format "2006/01/02 15:04:05 MST") }}
+                                  </time>
+                                  ({{ (.key_id) }})
+                                </button>
+                              </h2>
+                              <div id="accordion-collapse-gpg-{{ ($id) }}-{{ (.key_id) }}" class="accordion-collapse collapse" aria-labelledby="accordion-header-gpg-{{ ($id) }}-{{ (.key_id) }}" data-bs-parent="#accordion-gpg-{{ ($id) }}">
+                                <div class="accordion-body node-body">
+                                  <ul class="list-group list-group-flush">
+                                    <li class="list-group-item">
+                                      <div class="row row-cols-1 row-cols-sm-2 g-0">
+                                        <div class="col">{{ (i18n "gpg.key_id") }}</div>
+                                        <div class="col"><code>{{ (.key_id) }}</code></div>
+                                      </div>
+                                    </li>
+                                    <li class="list-group-item">
+                                      <div class="row row-cols-1 g-0">
+                                        <div class="col">{{ (i18n "gpg.key_raw") }}</div>
+                                        <div class="col">
+                                          <pre><code>{{ (.raw_key) }}</code></pre>
+                                        </div>
+                                      </div>
+                                    </li>
+                                    <li class="list-group-item">
+                                      <div class="row row-cols-1 row-cols-sm-2 g-0">
+                                        <div class="col">{{ (i18n "gpg.subkeys") }}</div>
+                                        <div class="col">
+                                          <ul class="list-unstyled">
+                                              {{ range (.subkeys) }}
+                                                <li><code>{{ (.key_id) }}</code></li>
+                                              {{ end }}
+                                          </ul>
+                                        </div>
+                                      </div>
+                                    </li>
+                                    <li class="list-group-item">
+                                      <div class="row row-cols-1 row-cols-sm-2 g-0">
+                                        <div class="col">{{ (i18n "email") }}</div>
+                                        <div class="col">
+                                          <ul class="list-unstyled">
+                                              {{ range (.emails) }}
+                                                <li>
+                                                  <a href="mailto:{{ (.email) }}">{{ (.email) }}</a>
+                                                </li>
+                                              {{ end }}
+                                          </ul>
+                                        </div>
+                                      </div>
+                                    </li>
+                                    <li class="list-group-item">
+                                      <div class="row row-cols-1 row-cols-sm-2 g-0">
+                                        <div class="col">{{ (i18n "date") }}</div>
+                                        <div class="col">
+                                          <time datetime="{{ (.created_at) }}" data-ext-fn="ext-date-local">
+                                              {{ ((.created_at) | time.Format "2006/01/02 15:04:05 MST") }}
+                                          </time>
+                                        </div>
+                                      </div>
+                                    </li>
+                                  </ul>
+                                </div>
+                              </div>
+                            </div>
+                          {{ end }}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </article>
+            {{ end }}
+        </div>
+    {{ else }}
+      <div class="col">
+          {{ (partial "function/alert" (dict
+          "type" "warning"
+          "icon" "fas fa-triangle-exclamation"
+          "msg" "alert.github.members_not_found"
+          )) }}
+      </div>
+    {{ end }}
+</div>
