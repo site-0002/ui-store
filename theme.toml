@@ -1,6 +1,6 @@
 name = "UI Store"
 license = "MIT"
-licenselink = ""
+licenselink = "https://github.com/site-0002/ui-custom/blob/main/LICENSE"
 description = "Store User Interface"
 homepage = "https://v77.dev"
 tags = ["website", "responsive", "multilingual", "mobile"]
