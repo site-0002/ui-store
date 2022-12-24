@@ -152,6 +152,27 @@ other = "All Keywords"
 [maintainers]
 other = "Maintainers"
 
+[location]
+other = "Location"
+
+[twitter]
+other = "Twitter"
+
+[public_repos]
+other = "Public repositories"
+
+[private_repos]
+other = "Private repositories"
+
+[description]
+other = "Description"
+
+[disk_usage]
+other = "Disk usage"
+
+[groups]
+other = "Groups"
+
 # -------------------------------------------------------------------------------------------------------------------- #
 # GPG.
 # -------------------------------------------------------------------------------------------------------------------- #
