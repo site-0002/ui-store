@@ -4,6 +4,9 @@
 
     <div class="section py-3 py-md-4">
       <div class="container">
+
+          {{ (partial "breadcrumb" .) }}
+
         <ul class="nav nav-tabs mb-3" id="{{ ($id_tabs) }}" data-ext-fn="ext-node-tabs" role="tablist">
           <li class="nav-item" role="presentation">
             <button title='{{ (i18n "home") }}' class="nav-link active" id="tab-main-home" data-bs-toggle="tab" data-bs-target="#tab-pane-main-home" type="button" role="tab" aria-controls="tab-pane-main-home" aria-selected="true">
