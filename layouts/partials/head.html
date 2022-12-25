@@ -1,15 +1,15 @@
 <meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"/>
 
+{{ $title := "" }}
+{{ if (and (.Title) ((ne (.Title) ($.Site.Title)))) }}{{ $title = (printf "%s /" (.Title)) }}{{ end }}
+
 {{ $description := ($.Site.Params.description) }}
 {{ with (.Summary) }}{{ $description = . }}{{ end }}
 {{ with (.Description) }}{{ $description = . }}{{ end }}
 
-{{ $emoji := ($.Site.Data.ui.meta.title.emoji) }}
-{{ with ($emoji) }}{{ $emoji = (printf "%s " ($emoji)) }}{{ end }}
-
-<title>{{ ($emoji) }}{{ if (ne (.Title) ($.Site.Title)) }}{{ (.Title) }} / {{ end }}{{ ($.Site.Title) }}</title>
-<meta name="title" content="{{ if (ne (.Title) ($.Site.Title)) }}{{ (.Title) }} / {{ end }}{{ ($.Site.Title) }}"/>
+<title>{{ $title }} {{ ($.Site.Title) }}</title>
+<meta name="title" content="{{ $title }} {{ ($.Site.Title) }}"/>
 <meta name="description" content="{{ ((($description) | plainify) | chomp) }}"/>
 
 <!--[ dns-prefetch ]-->
